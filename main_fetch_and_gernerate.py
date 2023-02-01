@@ -6,8 +6,9 @@ import os
 import math
 
 apnic_file_url = 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest'
-file_save_name = 'data_apnic-latest.txt'
-all_file_name = 'data_all.txt'
+apnic_save_name = 'data_apnic.txt'
+all_ipv4_country_cidr = 'data_all_ipv4_country_cidr.txt'
+all_ipv6_country_cidr = 'data_all_ipv6_country_cidr.txt'
 country_to_extract = 'all'
 
 def show_progress(a, b, c):
@@ -18,9 +19,9 @@ def show_progress(a, b, c):
 
 
 if __name__ == '__main__':
-    urllib.request.urlretrieve(url=apnic_file_url, filename=file_save_name, reporthook=show_progress)
+    urllib.request.urlretrieve(url=apnic_file_url, filename=apnic_save_name, reporthook=show_progress)
     record_dict_list = []
-    with open(file_save_name) as saved_file:
+    with open(apnic_save_name) as saved_file:
         valid_record_num = 0
         for line in saved_file.readlines():
             line_pattern = 'apnic\|(?P<country>\w{2})\|(?P<ip_version>ipv[4,6])\|(?P<net_address>[\d.:]+)\|(?P<net_size>\d+)\|\d+\|(assigned|allocated)'
@@ -36,10 +37,19 @@ if __name__ == '__main__':
     print("=====>>>>>> ALL Contry Codes:")
     print("%s " % sorted(countries))
 
-    # ipv6,CN,192.168.1.1/32
-    with open(all_file_name, 'w') as output_csv:
+    print("=====>>>>>> Generating %s" % all_ipv4_country_cidr)
+    # CN,192.168.1.1/32
+    with open(all_ipv4_country_cidr, 'w') as output_csv:
         for record in record_dict_list:
-            output_csv.write(record['ip_version'] + ',')
-            output_csv.write(record['country'] + ',')
-            output_csv.write(record['net_address'] + '/' + str( 32 - int(math.log(int(record['net_size']), 2))) + '\n')
+            if record['ip_version'] == 'ipv4' :
+                output_csv.write(record['country'] + ',')
+                output_csv.write(record['net_address'] + '/' + str( 32 - int(math.log(int(record['net_size']), 2))) + '\n')
+    
+    print("=====>>>>>> Generating %s" % all_ipv6_country_cidr)
+    # CN,192.168.1.1/32
+    with open(all_ipv6_country_cidr, 'w') as output_csv:
+        for record in record_dict_list:
+            if record['ip_version'] == 'ipv6' :
+                output_csv.write(record['country'] + ',')
+                output_csv.write(record['net_address'] + '/' + str( 32 - int(math.log(int(record['net_size']), 2))) + '\n')
 
