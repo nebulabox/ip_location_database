@@ -55,15 +55,13 @@ jobs:
           cd src && pwd && python3 main_fetch_and_gernerate.py
         shell: bash
 
-      # - name: Git push assets to "release" branch
-      #   if: ${{ github.event_name == 'schedule' }}
-      #   run: |
-      #     mv cn.txt release/
-      #     mv cn.txt.sha256sum release/
-      #     cd release
-      #     git config user.name 'github-actions[bot]'
-      #     git config user.email 'github-actions[bot]@users.noreply.github.com'
-      #     git add .
-      #     [ -n "$(git status -s)" ] && git commit -m "${{ env.RELEASE_NAME }}" || echo "Nothing to commit!"
-      #     git push
-      #   shell: bash
+      - name: Git push results to "main" branch
+        # if: ${{ github.event_name == 'schedule' }}
+        run: |
+          cd src && pwd
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          [ -n "$(git status -s)" ] && git commit -m "github-action-${{ env.RELEASE_NAME }}" || echo "Nothing to commit!"
+          git push
+        shell: bash
