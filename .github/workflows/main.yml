@@ -48,11 +48,11 @@ jobs:
         with:
           ref: main
           # Relative path under $GITHUB_WORKSPACE to place the repository
-          path: code
+          path: src
 
       - name: Run main_fetch_and_gernerate.py
         run: |
-          python3 main_fetch_and_gernerate.py
+          cd src && pwd && python3 main_fetch_and_gernerate.py
         shell: bash
 
       # - name: Git push assets to "release" branch
